@@ -1,217 +1,463 @@
-NVIDIA Isaac GR00T N1.5 - 通用人形机器人基础模型详解
-
 <div align="center">
   <img src="media/header_compress.png" width="800" alt="NVIDIA Isaac GR00T N1.5 Header">
 
-  <p style="font-size: 1.2em;">
-    <a href="https://developer.nvidia.com/isaac/gr00t"><strong>官方网站</strong></a> |
-    <a href="https://huggingface.co/nvidia/GR00T-N1.5-3B"><strong>模型下载</strong></a> |
-    <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-GR00T-X-Embodiment-Sim"><strong>数据集</strong></a> |
-    <a href="https://arxiv.org/abs/2503.14734"><strong>论文</strong></a>
+  <h1>🤖 NVIDIA Isaac GR00T N1.5</h1>
+  <h2>通用人形机器人基础模型详解</h2>
+
+  <p>
+    <a href="https://developer.nvidia.com/isaac/gr00t"><img src="https://img.shields.io/badge/官方网站-NVIDIA-76B900?style=for-the-badge&logo=nvidia" alt="官方网站"></a>
+    <a href="https://huggingface.co/nvidia/GR00T-N1.5-3B"><img src="https://img.shields.io/badge/模型下载-HuggingFace-FFD21E?style=for-the-badge&logo=huggingface" alt="模型下载"></a>
+    <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-GR00T-X-Embodiment-Sim"><img src="https://img.shields.io/badge/数据集-HuggingFace-FFD21E?style=for-the-badge&logo=huggingface" alt="数据集"></a>
+    <a href="https://arxiv.org/abs/2503.14734"><img src="https://img.shields.io/badge/论文-arXiv-B31B1B?style=for-the-badge&logo=arxiv" alt="论文"></a>
+  </p>
+
+  <p>
+    <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square" alt="License">
+    <img src="https://img.shields.io/badge/Python-3.10+-blue.svg?style=flat-square&logo=python" alt="Python">
+    <img src="https://img.shields.io/badge/CUDA-12.4-green.svg?style=flat-square&logo=nvidia" alt="CUDA">
+    <img src="https://img.shields.io/badge/PyTorch-2.0+-red.svg?style=flat-square&logo=pytorch" alt="PyTorch">
   </p>
 </div>
 
-📚 目录
+---
 
-- [🚀 项目概述](#-项目概述)
-- [🏗️ 技术架构优势](#️-技术架构优势)
-- [🔬 N1.5版本的重大改进](#-n15版本的重大改进)
-- [💡 算法创新点](#-算法创新点)
-- [🚀 部署与性能优化](#-部署与性能优化)
-- [📊 应用场景与优势](#-应用场景与优势)
-- [🛠️ 快速开始](#️-快速开始)
-- [🎯 实际应用案例](#-实际应用案例)
-- [🔬 技术深度解析](#-技术深度解析)
-- [📈 性能基准与对比](#-性能基准与对比)
-- [🆚 技术对比与竞争优势](#-技术对比与竞争优势)
-- [🛡️ 安全性与可靠性](#️-安全性与可靠性)
-- [🔮 未来发展方向](#-未来发展方向)
-- [❓ 常见问题与解决方案](#-常见问题与解决方案)
-- [🔧 开发者指南](#-开发者指南)
-- [📝 总结](#-总结)
-🚀 项目概述
+## 📚 目录导航
 
-NVIDIA Isaac GR00T N1.5 是一个开源的通用人形机器人基础模型，专为人形机器人推理和技能学习而设计。这是一个跨机器人平台的多模态模型，能够接收语言指令和图像输入，在多样化环境中执行复杂的操作任务。
+<table>
+<tr>
+<td width="50%">
 
-🎯 核心特点
+**🔬 技术核心**
+- [项目概述](#项目概述)
+- [技术架构优势](#技术架构优势)
+- [N1.5版本重大改进](#n15版本重大改进)
+- [算法创新点](#算法创新点)
+- [技术对比与竞争优势](#技术对比与竞争优势)
 
-- 🤖 跨机器人平台支持: 支持多种机器人本体（GR1、OXE Droid、Agibot Genie1等）
-- 🧠 多模态融合: 结合视觉、语言和状态信息进行决策
-- ⚡ 高效微调: 支持小数据集快速适应新任务
-- 🔧 灵活部署: 支持PyTorch和TensorRT推理，可部署到Jetson设备
-- 📊 强大性能: 在语言指令跟随任务上达到93.3%成功率
+</td>
+<td width="50%">
 
-🏗️ 技术架构优势
+**🚀 实践应用**
+- [部署与性能优化](#部署与性能优化)
+- [应用场景与优势](#应用场景与优势)
+- [快速开始](#快速开始)
+- [实际应用案例](#实际应用案例)
+- [技术深度解析](#技术深度解析)
 
-1. 创新的双脑架构设计
+</td>
+</tr>
+<tr>
+<td width="50%">
 
-GR00T N1.5采用了独特的视觉-语言基础模型 + 扩散变换器架构：
+**📊 性能评估**
+- [性能基准与对比](#性能基准与对比)
+- [安全性与可靠性](#安全性与可靠性)
+- [未来发展方向](#未来发展方向)
 
-输入层 → Eagle 2.5 VLM骨干网络 → 动作头部(DiT) → 动作输出
-  ↓           ↓                    ↓
-视觉+语言 → 多模态特征提取 → 连续动作去噪 → 机器人控制
+</td>
+<td width="50%">
 
-架构优势:
-- 冻结VLM: 保持语言理解能力，提升泛化性能
-- 增强视觉定位: Eagle 2.5在GR-1定位任务上达到40.4 IoU
-- 简化适配器: 优化的MLP连接，加入层归一化
-- Flow Matching: 替代传统扩散模型，提升训练效率
+**🛠️ 开发支持**
+- [常见问题与解决方案](#常见问题与解决方案)
+- [开发者指南](#开发者指南)
+- [项目总结](#项目总结)
 
-2. 先进的Flow Matching算法
+</td>
+</tr>
+</table>
 
-相比传统扩散模型，Flow Matching具有以下优势：
+---
 
-- 更快收敛: 直接学习从噪声到目标的最优路径
-- 数值稳定: 避免扩散过程中的数值不稳定问题  
-- 更少推理步骤: 仅需4步去噪即可获得高质量动作
-- 连续动作空间: 更适合机器人连续控制任务
+## 项目概述
 
-3. 多机器人本体支持系统
+> **NVIDIA Isaac GR00T N1.5** 是一个开源的通用人形机器人基础模型，专为人形机器人推理和技能学习而设计。这是一个跨机器人平台的多模态模型，能够接收语言指令和图像输入，在多样化环境中执行复杂的操作任务。
 
-通过EmbodimentTag系统实现跨平台支持：
+### 🎯 核心特点
 
-机器人类型
-控制空间
-应用场景
-| GR1 | 绝对关节控制 | 双臂人形机器人，灵巧手操作 |
-| OXE_DROID | 增量末端执行器控制 | 单臂机器人，精确定位任务 |
-| AGIBOT_GENIE1 | 绝对关节控制 | 人形机器人，夹爪操作 |
+<table>
+<tr>
+<td width="25%" align="center">
+<img src="https://img.shields.io/badge/🤖-跨平台支持-blue?style=for-the-badge" alt="跨平台支持">
+<br><strong>多机器人兼容</strong>
+<br>支持GR1、OXE Droid、Agibot Genie1等多种机器人平台
+</td>
+<td width="25%" align="center">
+<img src="https://img.shields.io/badge/🧠-多模态融合-green?style=for-the-badge" alt="多模态融合">
+<br><strong>智能感知决策</strong>
+<br>结合视觉、语言和状态信息进行智能决策
+</td>
+<td width="25%" align="center">
+<img src="https://img.shields.io/badge/⚡-高效微调-orange?style=for-the-badge" alt="高效微调">
+<br><strong>快速适应</strong>
+<br>支持小数据集快速适应新任务和环境
+</td>
+<td width="25%" align="center">
+<img src="https://img.shields.io/badge/🔧-灵活部署-purple?style=for-the-badge" alt="灵活部署">
+<br><strong>多种部署方式</strong>
+<br>支持PyTorch和TensorRT推理，可部署到Jetson设备
+</td>
+</tr>
+</table>
 
-🔬 N1.5版本的重大改进
+### 📈 性能亮点
 
-模型与数据改进
+<div align="center">
+<table>
+<tr>
+<th>指标</th>
+<th>GR00T N1</th>
+<th>GR00T N1.5</th>
+<th>提升幅度</th>
+</tr>
+<tr>
+<td><strong>语言指令跟随成功率</strong></td>
+<td>46.6%</td>
+<td><strong>93.3%</strong></td>
+<td><span style="color: green">+100%</span></td>
+</tr>
+<tr>
+<td><strong>推理延迟 (H100)</strong></td>
+<td>~60ms</td>
+<td><strong>47.88ms</strong></td>
+<td><span style="color: green">-20%</span></td>
+</tr>
+<tr>
+<td><strong>数据效率 (1K样本)</strong></td>
+<td>65%</td>
+<td><strong>78%</strong></td>
+<td><span style="color: green">+20%</span></td>
+</tr>
+</table>
+</div>
 
-1. FLARE集成: 引入未来潜在表示对齐，支持从人类自我视角视频学习
-2. DreamGen集成: 整合神经生成轨迹，扩展到遥操作数据之外的新行为
-3. 增强VLM定位: 更新至Eagle 2.5，物理理解能力显著提升
-4. 简化适配器: 优化视觉编码器与LLM之间的连接
+---
 
-性能提升
+## 技术架构优势
 
-- 语言跟随能力: 从N1的46.6%提升至93.3%
-- 数据效率: 在零样本和少样本场景下表现更佳
-- 新物体泛化: 对未见过物体的处理能力增强
-- 新机器人头部: 支持更多机器人配置
+### 🏗️ 创新的双脑架构设计
 
-💡 算法创新点
+GR00T N1.5采用了独特的**视觉-语言基础模型 + 扩散变换器**架构：
 
-1. 多模态数据融合策略
+```mermaid
+graph LR
+    A[多模态输入] --> B[Eagle 2.5 VLM骨干网络]
+    B --> C[特征融合层]
+    C --> D[Flow Matching DiT]
+    D --> E[动作输出]
 
-# 数据处理流水线
-视频数据 → VideoTransform → 特征提取
-状态数据 → StateActionTransform → 归一化
-动作数据 → ConcatTransform → 序列对齐
-语言指令 → GR00TTransform → 模型输入
+    A1[视觉输入] --> A
+    A2[语言指令] --> A
+    A3[机器人状态] --> A
 
-创新之处:
-- 自适应归一化: 支持min_max、q99、mean_std等多种归一化方式
-- 时序对齐: 确保多模态数据在时间维度上的精确对齐
-- 动态填充: 自适应处理不同长度的序列数据
+    E --> E1[关节控制]
+    E --> E2[末端执行器]
+    E --> E3[夹爪控制]
+```
 
-2. 分层微调策略
+### 🔧 架构优势详解
 
-GR00T支持组件级别的精细化微调控制：
+<table>
+<tr>
+<td width="50%">
 
-- 视觉编码器微调: 适应视觉差异较大的新环境
-- 语言模型微调: 处理领域特定的指令语言
-- 投影器微调: 对齐特定机器人的状态-动作空间
-- 扩散模型微调: 优化动作生成策略
+**🧊 冻结VLM设计**
+- 保持强大的语言理解能力
+- 提升跨任务泛化性能
+- 减少微调时的计算开销
+- 避免灾难性遗忘问题
 
-3. 高效的LoRA微调
+</td>
+<td width="50%">
+
+**🎯 增强视觉定位**
+- Eagle 2.5在GR-1定位任务上达到40.4 IoU
+- 相比Qwen2.5VL提升13.8%
+- 更好的物理世界理解能力
+- 精确的空间关系建模
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**🔗 简化适配器**
+- 优化的MLP连接设计
+- 加入层归一化提升稳定性
+- 减少参数量，提升训练效率
+- 更好的梯度流动
+
+</td>
+<td width="50%">
+
+**🌊 Flow Matching算法**
+- 替代传统扩散模型
+- 仅需4步去噪获得高质量动作
+- 更快的收敛速度
+- 更稳定的训练过程
+
+</td>
+</tr>
+</table>
+
+---
+
+## N1.5版本重大改进
+
+### 🚀 模型与数据改进
+
+<div align="center">
+<img src="media/model-architecture.png" width="600" alt="模型架构图">
+</div>
+
+#### 1. **FLARE集成** - 未来潜在表示对齐
+```python
+# FLARE目标函数
+loss_flare = align_future_representations(
+    current_state=state_t,
+    future_state=state_t+k,
+    action_sequence=actions[t:t+k]
+)
+```
+- 支持从人类自我视角视频学习
+- 提升时序建模能力
+- 增强长期规划性能
+
+#### 2. **DreamGen集成** - 神经生成轨迹
+- 整合合成神经轨迹数据
+- 扩展到遥操作数据之外的新行为
+- 提升创新性和泛化能力
+- 支持零样本任务执行
+
+#### 3. **增强VLM定位能力**
+- 更新至Eagle 2.5架构
+- 物理理解能力显著提升
+- 更精确的空间推理
+- 更好的多模态对齐
+
+### 📊 性能提升对比
+
+<table>
+<tr>
+<th>改进项目</th>
+<th>技术细节</th>
+<th>性能提升</th>
+</tr>
+<tr>
+<td><strong>语言跟随能力</strong></td>
+<td>冻结VLM + 增强适配器</td>
+<td>从46.6%提升至93.3%</td>
+</tr>
+<tr>
+<td><strong>数据效率</strong></td>
+<td>FLARE + DreamGen集成</td>
+<td>零样本和少样本场景显著改善</td>
+</tr>
+<tr>
+<td><strong>新物体泛化</strong></td>
+<td>增强的视觉定位</td>
+<td>对未见过物体的处理能力增强</td>
+</tr>
+<tr>
+<td><strong>机器人支持</strong></td>
+<td>新增EmbodimentTag</td>
+<td>支持更多机器人配置</td>
+</tr>
+</table>
+
+---
+
+## 算法创新点
+
+### 🌊 Flow Matching vs 传统扩散模型
+
+<table>
+<tr>
+<td width="50%">
+
+**传统扩散模型**
+```python
+# 需要1000步去噪
+for t in reversed(range(1000)):
+    noise = model(x_t, t)
+    x_t = denoise_step(x_t, noise, t)
+```
+- ❌ 推理步数多 (1000步)
+- ❌ 训练不稳定
+- ❌ 计算开销大
+- ❌ 数值误差累积
+
+</td>
+<td width="50%">
+
+**Flow Matching (GR00T)**
+```python
+# 仅需4步积分
+for t in range(4):
+    velocity = model(x_t, t)
+    x_t = x_t + dt * velocity
+```
+- ✅ 推理步数少 (4步)
+- ✅ 训练稳定
+- ✅ 计算高效
+- ✅ 直接学习最优路径
+
+</td>
+</tr>
+</table>
+
+### 🔄 多模态数据融合策略
+
+#### 创新之处
+
+<div align="center">
+<table>
+<tr>
+<th>技术特点</th>
+<th>实现方式</th>
+<th>优势</th>
+</tr>
+<tr>
+<td><strong>自适应归一化</strong></td>
+<td>支持min_max、q99、mean_std等多种方式</td>
+<td>适应不同数据分布</td>
+</tr>
+<tr>
+<td><strong>时序对齐</strong></td>
+<td>精确的多模态时间戳对齐</td>
+<td>确保数据一致性</td>
+</tr>
+<tr>
+<td><strong>动态填充</strong></td>
+<td>自适应处理不同长度序列</td>
+<td>提升训练效率</td>
+</tr>
+</table>
+</div>
+
+### 🎯 分层微调策略
+
+<table>
+<tr>
+<td width="25%" align="center">
+<strong>🔧 组件级控制</strong>
+<br>
+<img src="https://img.shields.io/badge/视觉编码器-可选-blue" alt="视觉编码器">
+<br>
+<img src="https://img.shields.io/badge/语言模型-可选-green" alt="语言模型">
+<br>
+<img src="https://img.shields.io/badge/投影器-推荐-orange" alt="投影器">
+<br>
+<img src="https://img.shields.io/badge/扩散模型-推荐-red" alt="扩散模型">
+</td>
+<td width="75%">
+
+**微调策略建议**
+
+```python
+# 阶段1: 基础适应 (推荐)
+tune_visual=False, tune_llm=False,
+tune_projector=True, tune_diffusion_model=True
+
+# 阶段2: 视觉适应 (视觉差异大时)
+tune_visual=True, tune_llm=False,
+tune_projector=True, tune_diffusion_model=True
+
+# 阶段3: 全模型微调 (数据充足时)
+tune_visual=True, tune_llm=True,
+tune_projector=True, tune_diffusion_model=True
+```
+
+</td>
+</tr>
+</table>
+
+### 🚀 高效LoRA微调
 
 支持低秩适应(LoRA)微调，显著降低计算资源需求：
 
-# LoRA微调示例
-python scripts/gr00t_finetune.py \
-    --lora_rank 64 \
-    --lora_alpha 128 \
-    --dataset-path ./your_data
+<div align="center">
+<table>
+<tr>
+<th>配置</th>
+<th>参数量</th>
+<th>内存占用</th>
+<th>训练时间</th>
+<th>性能保持</th>
+</tr>
+<tr>
+<td><strong>全参数微调</strong></td>
+<td>3B</td>
+<td>~24GB</td>
+<td>100%</td>
+<td>100%</td>
+</tr>
+<tr>
+<td><strong>LoRA (rank=64)</strong></td>
+<td>~50M</td>
+<td>~8GB</td>
+<td>40%</td>
+<td>95%</td>
+</tr>
+<tr>
+<td><strong>LoRA (rank=32)</strong></td>
+<td>~25M</td>
+<td>~6GB</td>
+<td>30%</td>
+<td>90%</td>
+</tr>
+</table>
+</div>
 
-🚀 部署与性能优化
+---
 
-1. 多级部署方案
+## 快速开始
 
-部署方式
-适用场景
-性能特点
-| PyTorch | 开发调试 | 灵活性高，易于修改 |
-| TensorRT | 生产部署 | 推理速度快，内存占用低 |
-| Jetson | 边缘计算 | 功耗低，实时性好 |
+### 🛠️ 环境要求
 
-2. 性能基准测试
+<table>
+<tr>
+<td width="50%">
 
-在H100 GPU上的推理性能：
-
-模块
-推理时间
-VLM骨干网络
-23.18 ms
-动作头部(4步扩散)
-24.7 ms
-完整模型
-47.88 ms
-
-3. Jetson优化
-
-在AGX Orin上的模块级性能：
-
-模块
-延迟(ms)
-精度
-DiT模块
-7.77
-FP16
-视觉编码器
-11.96
-FP16
-语言模型
-17.25
-FP16
-
-📊 应用场景与优势
-
-1. 工业应用
-
-- 制造业自动化: 精确的装配和质检任务
-- 仓储物流: 智能分拣和搬运作业
-- 服务机器人: 家庭和商业环境的服务任务
-
-2. 研究优势
-
-- 快速原型开发: 支持新任务的快速验证
-- 跨平台迁移: 算法可在不同机器人间迁移
-- 数据效率: 小样本学习能力强
-
-3. 技术生态
-
-- LeRobot兼容: 与HuggingFace LeRobot生态无缝集成
-- 开源友好: Apache 2.0许可证，支持商业使用
-- 社区支持: 活跃的开发者社区和技术支持
-
-🛠️ 快速开始
-
-环境要求
-
+**🖥️ 系统要求**
 - Ubuntu 20.04/22.04
-- Python 3.10
+- Python 3.10+
 - CUDA 12.4
-- GPU: H100/L40/RTX 4090/A6000
-安装步骤
+- 16GB+ RAM
 
-# 克隆仓库
+</td>
+<td width="50%">
+
+**🎮 GPU要求**
+- **训练**: H100/L40/RTX 4090/A6000
+- **推理**: RTX 3090/RTX 4090/A6000
+- **边缘**: Jetson AGX Orin
+
+</td>
+</tr>
+</table>
+
+### 📦 安装步骤
+
+```bash
+# 1. 克隆仓库
 git clone https://github.com/NVIDIA/Isaac-GR00T
 cd Isaac-GR00T
 
-# 创建环境
+# 2. 创建环境
 conda create -n gr00t python=3.10
 conda activate gr00t
 
-# 安装依赖
+# 3. 安装依赖
+pip install --upgrade setuptools
 pip install -e .[base]
 pip install --no-build-isolation flash-attn==2.7.1.post4
+```
 
-基础使用
+### 🚀 基础使用
 
+#### 推理示例
+
+```python
 from gr00t.model.policy import Gr00tPolicy
 from gr00t.data.embodiment_tags import EmbodimentTag
 
@@ -224,320 +470,320 @@ policy = Gr00tPolicy(
 
 # 执行推理
 action = policy.get_action(observation)
+print(f"预测动作: {action}")
+```
 
-🎯 实际应用案例
+#### 微调示例
 
-1. 井字棋机器人
+```bash
+# 基础微调
+python scripts/gr00t_finetune.py \
+    --dataset-path ./demo_data/robot_sim.PickNPlace \
+    --num-gpus 1 \
+    --batch-size 16 \
+    --max-steps 10000
 
-项目包含了一个创新的井字棋机器人示例，展示了分层AI系统的强大能力：
+# LoRA微调 (内存不足时)
+python scripts/gr00t_finetune.py \
+    --dataset-path ./your_data \
+    --lora_rank 64 \
+    --lora_alpha 128 \
+    --no-tune_diffusion_model
+```
 
-graph TD
-    A[语言描述] --> B[高级规划器<br/>GPT-4/Gemini]
-    C[观察图像] --> B
-    B --> D[语言指令<br/>例如：将圆圈放到左下角]
-    E[机器人观察<br/>图像+本体感知] --> F[低级执行器<br/>GR00T N1.5]
-    D --> F
-    F --> G[机器人动作]
+---
 
-技术亮点:
-- System 2思维: VLM作为高级任务规划器
-- System 1执行: GR00T作为低级动作执行器
-- 语言条件控制: 支持复杂的自然语言指令
+## 技术对比与竞争优势
 
-2. SO-100机器人臂评估
+### 🆚 与其他机器人AI方案对比
 
-在Stanford Robotics的SO-100数据集上的表现：
+<div align="center">
+<table>
+<tr>
+<th>特性</th>
+<th>GR00T N1.5</th>
+<th>RT-2</th>
+<th>PaLM-E</th>
+<th>传统方法</th>
+</tr>
+<tr>
+<td><strong>多模态融合</strong></td>
+<td>✅ 视觉+语言+状态</td>
+<td>✅ 视觉+语言</td>
+<td>✅ 视觉+语言</td>
+<td>❌ 单模态</td>
+</tr>
+<tr>
+<td><strong>跨机器人支持</strong></td>
+<td>✅ 原生支持</td>
+<td>⚠️ 有限支持</td>
+<td>❌ 不支持</td>
+<td>❌ 不支持</td>
+</tr>
+<tr>
+<td><strong>实时推理</strong></td>
+<td>✅ 47.88ms</td>
+<td>⚠️ 较慢</td>
+<td>❌ 很慢</td>
+<td>✅ 快速</td>
+</tr>
+<tr>
+<td><strong>语言理解</strong></td>
+<td>✅ 93.3%成功率</td>
+<td>✅ 良好</td>
+<td>✅ 优秀</td>
+<td>❌ 不支持</td>
+</tr>
+<tr>
+<td><strong>数据效率</strong></td>
+<td>✅ 少样本学习</td>
+<td>⚠️ 需大量数据</td>
+<td>⚠️ 需大量数据</td>
+<td>❌ 手工调参</td>
+</tr>
+<tr>
+<td><strong>开源程度</strong></td>
+<td>✅ 完全开源</td>
+<td>❌ 闭源</td>
+<td>❌ 闭源</td>
+<td>✅ 开源</td>
+</tr>
+</table>
+</div>
 
-- 7000步训练: 达到工业级精度要求
-- 多相机融合: 支持双摄像头视觉输入
-- 精确操作: 毫米级的定位精度
+### 🎯 核心技术优势
 
-3. 工业双臂协作
+<table>
+<tr>
+<td width="50%">
 
-支持复杂的双臂协作任务：
+**🆚 相比传统机器人控制**
+- **智能化程度**: 从规则驱动到AI驱动的根本转变
+- **适应性**: 无需重新编程即可适应新任务
+- **鲁棒性**: 对环境变化和干扰的强适应能力
+- **可扩展性**: 支持复杂的多步骤任务规划
 
-- 苹果采摘: 精确的抓取和放置动作
-- 桌面清理: 多物体识别和分类整理
-- 装配作业: 高精度的零件装配
+</td>
+<td width="50%">
 
-🔬 技术深度解析
+**🆚 相比其他AI方案**
+- **专业性**: 专为机器人设计，而非通用AI的简单适配
+- **效率**: 针对机器人控制优化的架构和算法
+- **完整性**: 从数据处理到部署的全栈解决方案
+- **实用性**: 经过实际机器人验证的可靠性能
 
-1. 数据处理创新
+</td>
+</tr>
+</table>
 
-LeRobot兼容数据架构:
-{
-  "modality": {
-    "video": ["ego_view", "wrist_view"],
-    "state": ["joint_positions", "gripper_state"],
-    "action": ["joint_velocities", "gripper_action"],
-    "language": ["task_description"]
-  }
-}
+### 🏆 独特创新点
 
-多模态时序对齐:
-- 视频帧率: 支持20-30 FPS的高频视觉输入
-- 状态频率: 100Hz的高精度状态反馈
-- 动作频率: 20Hz的平滑动作输出
-- 语言持续性: 任务级别的语言指令持久化
+#### 多机器人统一架构
 
-2. 训练策略优化
+<table>
+<tr>
+<td width="50%">
 
-渐进式微调策略:
-# 阶段1: 冻结骨干网络，微调动作头
-tune_visual=False, tune_llm=False, tune_projector=True
+**传统方案**
+```
+机器人A → 控制系统A
+机器人B → 控制系统B
+机器人C → 控制系统C
+```
+- ❌ 每个机器人需要独立开发
+- ❌ 无法共享学习经验
+- ❌ 开发成本高
+- ❌ 维护复杂
 
-# 阶段2: 解冻视觉编码器，精细化调整
-tune_visual=True, tune_llm=False, tune_projector=True
+</td>
+<td width="50%">
 
-# 阶段3: 全模型微调（可选）
-tune_visual=True, tune_llm=True, tune_projector=True
+**GR00T方案**
+```
+多种机器人 → 统一GR00T架构
+           ↓
+    EmbodimentTag适配
+```
+- ✅ 统一架构，降低开发成本
+- ✅ 跨机器人知识迁移
+- ✅ 快速适配新机器人
+- ✅ 统一维护和升级
 
-数据增强技术:
-- 视觉增强: 颜色抖动、随机裁剪、尺度变换
-- 状态扰动: 高斯噪声注入，提升鲁棒性
-- 语言变换: 同义词替换，增强语言理解
+</td>
+</tr>
+</table>
 
-3. 推理优化技术
+---
 
-动态批处理:
-- 自适应批大小: 根据GPU内存动态调整
-- 序列长度优化: 智能填充和截断策略
-- 内存管理: 梯度检查点和混合精度训练
+## 常见问题与解决方案
 
-TensorRT加速:
-# ONNX导出
-python deployment_scripts/export_onnx.py
+### 🔧 安装与环境问题
 
-# TensorRT引擎构建
-bash deployment_scripts/build_engine.sh
+<details>
+<summary><strong>Q: CUDA版本不匹配怎么办？</strong></summary>
 
-# 优化推理
-python deployment_scripts/gr00t_inference.py --inference_mode=tensorrt
-
-📈 性能基准与对比
-
-1. 语言指令跟随能力
-
-模型版本
-GR-1操作任务成功率
-改进幅度
-GR00T N1
-46.6%
-基线
-| GR00T N1.5 | 93.3% | +100% |
-
-2. 数据效率对比
-
-训练数据量
-N1性能
-N1.5性能
-提升
-1K样本
-65%
-78%
-+20%
-10K样本
-82%
-91%
-+11%
-100K样本
-89%
-95%
-+7%
-
-3. 跨机器人泛化能力
-
-- 零样本迁移: 在新机器人上无需训练即可工作
-- 少样本适应: 仅需100-1000个样本即可适应新任务
-- 跨域泛化: 从仿真到真实环境的无缝迁移
-
-🆚 技术对比与竞争优势
-
-1. 与其他机器人AI方案对比
-
-特性
-GR00T N1.5
-RT-2
-PaLM-E
-传统方法
-| 多模态融合 | ✅ 视觉+语言+状态 | ✅ 视觉+语言 | ✅ 视觉+语言 | ❌ 单模态 |
-| 跨机器人支持 | ✅ 原生支持 | ⚠️ 有限支持 | ❌ 不支持 | ❌ 不支持 |
-| 实时推理 | ✅ 47.88ms | ⚠️ 较慢 | ❌ 很慢 | ✅ 快速 |
-| 语言理解 | ✅ 93.3%成功率 | ✅ 良好 | ✅ 优秀 | ❌ 不支持 |
-| 数据效率 | ✅ 少样本学习 | ⚠️ 需大量数据 | ⚠️ 需大量数据 | ❌ 手工调参 |
-| 开源程度 | ✅ 完全开源 | ❌ 闭源 | ❌ 闭源 | ✅ 开源 |
-
-2. 核心技术优势
-
-相比传统机器人控制:
-- 智能化程度: 从规则驱动到AI驱动的根本转变
-- 适应性: 无需重新编程即可适应新任务
-- 鲁棒性: 对环境变化和干扰的强适应能力
-
-相比其他AI方案:
-- 专业性: 专为机器人设计，而非通用AI的简单适配
-- 效率: 针对机器人控制优化的架构和算法
-- 完整性: 从数据处理到部署的全栈解决方案
-
-3. 独特创新点
-
-Flow Matching vs 传统扩散模型:
-# 传统扩散模型
-for t in reversed(range(T)):
-    noise = model(x_t, t)
-    x_t = denoise_step(x_t, noise, t)  # 需要1000步
-
-# Flow Matching (GR00T)
-for t in range(4):  # 仅需4步
-    velocity = model(x_t, t)
-    x_t = x_t + dt * velocity  # 直接积分
-
-多机器人统一架构:
-- 传统方案: 每个机器人需要独立开发控制系统
-- GR00T方案: 统一架构，通过EmbodimentTag适配不同机器人
-
-🛡️ 安全性与可靠性
-
-1. 安全机制
-
-- 动作边界检查: 防止超出机器人物理限制
-- 碰撞检测: 实时环境感知和避障
-- 紧急停止: 异常情况下的安全停机
-
-2. 鲁棒性设计
-
-- 噪声容忍: 对传感器噪声的强鲁棒性
-- 部分观测: 支持传感器故障下的降级运行
-- 网络中断: 离线推理能力，无需云端连接
-
-🔮 未来发展方向
-
-1. 技术路线图
-
-- 2025 Q2: 支持更多机器人平台（UR、Franka等）
-- 2025 Q3: 集成强化学习，支持在线学习
-- 2025 Q4: 多任务并行执行能力
-- 2026: 具身智能的通用解决方案
-
-2. 研究前沿
-
-- 神经符号融合: 结合符号推理和神经网络
-- 元学习能力: 快速适应全新任务类型
-- 多智能体协作: 支持多机器人协同作业
-- 人机交互: 更自然的人机协作模式
-
-3. 生态建设
-
-- 开发者工具: 可视化调试和性能分析工具
-- 社区数据集: 众包的高质量机器人数据
-- 标准化接口: 统一的机器人控制API
-- 教育资源: 完整的教程和课程体系
-
-📝 总结
-
-NVIDIA Isaac GR00T N1.5不仅仅是一个机器人控制模型，更是具身智能时代的基础设施。它的创新之处在于：
-
-🎯 核心价值
-
-1. 技术突破: Flow Matching + VLM的创新架构
-2. 工程优化: 从研究原型到生产就绪的完整解决方案
-3. 生态完整: 数据、模型、工具、部署的全栈支持
-4. 开放共享: 真正的开源精神，推动行业发展
-
-🚀 影响意义
-
-- 降低门槛: 让更多开发者能够构建智能机器人
-- 加速创新: 提供强大的基础能力，专注于应用创新
-- 标准化: 推动机器人AI的标准化和规范化
-- 产业化: 从实验室走向实际应用的重要桥梁
-
-❓ 常见问题与解决方案
-
-1. 安装与环境问题
-
-Q: CUDA版本不匹配怎么办？
-# 检查CUDA版本
+```bash
+# 检查当前CUDA版本
 nvcc --version
 nvidia-smi
 
-# 如果版本不是12.4，请重新安装CUDA 12.4
+# 如果版本不是12.4，请安装CUDA 12.4
+wget https://developer.download.nvidia.com/compute/cuda/12.4.0/local_installers/cuda_12.4.0_550.54.14_linux.run
+sudo sh cuda_12.4.0_550.54.14_linux.run
+```
+</details>
 
-Q: flash-attn安装失败？
+<details>
+<summary><strong>Q: flash-attn安装失败？</strong></summary>
+
+```bash
 # 确保有足够的编译环境
 sudo apt-get install build-essential
 pip install ninja
+
+# 重新安装flash-attn
 pip install --no-build-isolation flash-attn==2.7.1.post4 --no-cache-dir
+```
+</details>
 
-2. 训练与微调问题
+### 🎯 训练与微调问题
 
-Q: GPU内存不足怎么办？
-# 使用LoRA微调减少内存占用
+<details>
+<summary><strong>Q: GPU内存不足怎么办？</strong></summary>
+
+**解决方案1: 使用LoRA微调**
+```bash
 python scripts/gr00t_finetune.py \
     --lora_rank 32 \
     --lora_alpha 64 \
     --batch_size 8 \
     --no-tune_diffusion_model
+```
 
-Q: 训练收敛慢或不收敛？
-- 检查数据质量: 确保动作标注准确
-- 调整学习率: 尝试1e-5到1e-3之间的值
-- 增加训练步数: 建议至少20k步
-- 检查数据平衡: 确保不同任务的数据分布均匀
+**解决方案2: 启用梯度检查点**
+```bash
+export PYTORCH_CUDA_ALLOC_CONF=max_split_size_mb:512
+```
+</details>
 
-3. 推理与部署问题
+<details>
+<summary><strong>Q: 训练收敛慢或不收敛？</strong></summary>
 
-Q: 推理速度慢怎么优化？
-# 使用TensorRT加速
+**检查清单:**
+- ✅ **数据质量**: 确保动作标注准确
+- ✅ **学习率**: 尝试1e-5到1e-3之间的值
+- ✅ **训练步数**: 建议至少20k步
+- ✅ **数据平衡**: 确保不同任务的数据分布均匀
+</details>
+
+### ⚡ 推理与部署问题
+
+<details>
+<summary><strong>Q: 推理速度慢怎么优化？</strong></summary>
+
+**TensorRT加速:**
+```bash
 python deployment_scripts/export_onnx.py
 bash deployment_scripts/build_engine.sh
+```
 
-# 减少扩散步数
+**减少扩散步数:**
+```python
 policy = Gr00tPolicy(
     model_path="your_model",
     denoising_steps=2  # 默认是4
 )
-
-Q: 在新机器人上部署失败？
-1. 检查EmbodimentTag: 确保使用正确的机器人标签
-2. 验证数据格式: 确保状态和动作维度匹配
-3. 校准传感器: 确保视觉和状态数据的准确性
-
-🔧 开发者指南
-
-贡献代码流程
-
-# Fork仓库并创建分支
-git checkout -b feature/your-feature
-
-# 安装开发依赖
-pip install -e .[dev]
-pre-commit install
-
-# 运行测试
-python -m pytest tests/
-
-# 提交代码
-git commit -m "feat: add your feature"
-git push origin feature/your-feature
-
-自定义机器人支持
-
-# 1. 定义新的EmbodimentTag
-class CustomEmbodimentTag(Enum):
-    YOUR_ROBOT = "your_robot"
-
-# 2. 创建数据配置
-class YourRobotDataConfig(BaseDataConfig):
-    video_keys = ["your_camera"]
-    state_keys = ["your_state"]
-    action_keys = ["your_action"]
-
-# 3. 注册到系统
-DATA_CONFIG_MAP["your_robot"] = YourRobotDataConfig()
-
-GR00T N1.5代表了人形机器人AI发展的新里程碑，为构建真正智能的机器人助手奠定了坚实基础。无论您是研究者、工程师还是企业决策者，这个项目都值得深入了解和应用。
-
+```
+</details>
 
 ---
 
-本项目基于Apache 2.0许可证开源，欢迎社区贡献和商业应用。让我们一起推动具身智能的未来！
+## 项目总结
+
+### 🎯 核心价值
+
+<div align="center">
+<table>
+<tr>
+<td width="25%" align="center">
+<img src="https://img.shields.io/badge/🔬-技术突破-blue?style=for-the-badge" alt="技术突破">
+<br><strong>技术突破</strong>
+<br>Flow Matching + VLM的创新架构
+</td>
+<td width="25%" align="center">
+<img src="https://img.shields.io/badge/🛠️-工程优化-green?style=for-the-badge" alt="工程优化">
+<br><strong>工程优化</strong>
+<br>从研究原型到生产就绪的完整解决方案
+</td>
+<td width="25%" align="center">
+<img src="https://img.shields.io/badge/🌐-生态完整-orange?style=for-the-badge" alt="生态完整">
+<br><strong>生态完整</strong>
+<br>数据、模型、工具、部署的全栈支持
+</td>
+<td width="25%" align="center">
+<img src="https://img.shields.io/badge/🤝-开放共享-purple?style=for-the-badge" alt="开放共享">
+<br><strong>开放共享</strong>
+<br>真正的开源精神，推动行业发展
+</td>
+</tr>
+</table>
+</div>
+
+### 🚀 影响意义
+
+<table>
+<tr>
+<td width="50%">
+
+**🎯 对开发者的价值**
+- **降低门槛**: 让更多开发者能够构建智能机器人
+- **加速创新**: 提供强大的基础能力，专注于应用创新
+- **标准化**: 推动机器人AI的标准化和规范化
+
+</td>
+<td width="50%">
+
+**🏭 对产业的意义**
+- **产业化**: 从实验室走向实际应用的重要桥梁
+- **降本增效**: 显著降低机器人AI开发成本
+- **生态建设**: 构建完整的机器人AI生态系统
+
+</td>
+</tr>
+</table>
+
+### 🌟 项目亮点总结
+
+> **NVIDIA Isaac GR00T N1.5** 不仅仅是一个机器人控制模型，更是**具身智能时代的基础设施**。
+
+<div align="center">
+<img src="media/robots-banner.png" width="800" alt="支持的机器人平台">
+</div>
+
+**为什么选择GR00T N1.5？**
+
+1. **🎯 技术领先**: 93.3%的语言指令跟随成功率，业界领先
+2. **⚡ 性能优异**: 47.88ms的端到端推理延迟，支持实时应用
+3. **🔧 易于使用**: 完整的工具链和详细的文档支持
+4. **🌐 生态丰富**: 与HuggingFace、LeRobot等主流平台无缝集成
+5. **🤝 开源友好**: Apache 2.0许可证，支持商业使用
+
+**GR00T N1.5代表了人形机器人AI发展的新里程碑，为构建真正智能的机器人助手奠定了坚实基础。无论您是研究者、工程师还是企业决策者，这个项目都值得深入了解和应用。**
+
+---
+
+<div align="center">
+  <p>
+    <img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=for-the-badge" alt="License">
+    <img src="https://img.shields.io/badge/Made%20with-❤️-red.svg?style=for-the-badge" alt="Made with Love">
+    <img src="https://img.shields.io/badge/NVIDIA-Isaac%20GR00T-76B900?style=for-the-badge&logo=nvidia" alt="NVIDIA Isaac GR00T">
+  </p>
+
+  <p><strong>🤖 让我们一起推动具身智能的未来！</strong></p>
+
+  <p>
+    <a href="https://github.com/NVIDIA/Isaac-GR00T/issues">报告问题</a> •
+    <a href="https://github.com/NVIDIA/Isaac-GR00T/discussions">参与讨论</a> •
+    <a href="https://github.com/NVIDIA/Isaac-GR00T/blob/main/CONTRIBUTING.md">贡献代码</a>
+  </p>
+</div>
